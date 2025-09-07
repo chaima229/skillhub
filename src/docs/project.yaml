@@ -1,0 +1,105 @@
+paths:
+  /api/v1/projects:
+    get:
+      tags: [Project]
+      summary: Liste des projets
+      responses:
+        "200":
+          description: Liste des projets
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Project"
+    post:
+      tags: [Project]
+      summary: Créer un projet
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProjectCreate"
+      responses:
+        "201":
+          description: Projet créé
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Project"
+  /api/v1/projects/{id}:
+    get:
+      tags: [Project]
+      summary: Récupérer un projet par ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Projet trouvé
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Project"
+        "404":
+          description: Projet non trouvé
+    patch:
+      tags: [Project]
+      summary: Modifier un projet
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProjectUpdate"
+      responses:
+        "200":
+          description: Projet modifié
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Project"
+    delete:
+      tags: [Project]
+      summary: Supprimer un projet
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "204":
+          description: Projet supprimé
+
+components:
+  schemas:
+    Project:
+      type: object
+      properties:
+        id: { type: string }
+        title: { type: string }
+        description: { type: string }
+        objectives: { type: string }
+        createdById: { type: string }
+    ProjectCreate:
+      type: object
+      required: [title, description, objectives, createdById]
+      properties:
+        title: { type: string }
+        description: { type: string }
+        objectives: { type: string }
+        createdById: { type: string }
+    ProjectUpdate:
+      type: object
+      properties:
+        title: { type: string }
+        description: { type: string }
+        objectives: { type: string }

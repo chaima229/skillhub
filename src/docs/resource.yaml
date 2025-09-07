@@ -1,0 +1,103 @@
+paths:
+  /api/v1/resources:
+    get:
+      tags: [Resource]
+      summary: Liste des ressources
+      responses:
+        "200":
+          description: Liste des ressources
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Resource"
+    post:
+      tags: [Resource]
+      summary: Créer une ressource
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ResourceCreate"
+      responses:
+        "201":
+          description: Ressource créée
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Resource"
+  /api/v1/resources/{id}:
+    get:
+      tags: [Resource]
+      summary: Récupérer une ressource par ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Ressource trouvée
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Resource"
+        "404":
+          description: Ressource non trouvée
+    patch:
+      tags: [Resource]
+      summary: Modifier une ressource
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ResourceUpdate"
+      responses:
+        "200":
+          description: Ressource modifiée
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Resource"
+    delete:
+      tags: [Resource]
+      summary: Supprimer une ressource
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "204":
+          description: Ressource supprimée
+
+components:
+  schemas:
+    Resource:
+      type: object
+      properties:
+        id: { type: string }
+        type: { type: string }
+        url: { type: string }
+        projectId: { type: string }
+    ResourceCreate:
+      type: object
+      required: [type, url, projectId]
+      properties:
+        type: { type: string }
+        url: { type: string }
+        projectId: { type: string }
+    ResourceUpdate:
+      type: object
+      properties:
+        type: { type: string }
+        url: { type: string }
+        projectId: { type: string }

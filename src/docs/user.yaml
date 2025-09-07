@@ -1,0 +1,182 @@
+openapi: 3.0.0
+info:
+  title: SkillHub API - User Module
+  version: 1.0.0
+  description: API pour la gestion des utilisateurs
+
+tags:
+  - name: Users
+    description: Opérations sur les utilisateurs
+
+paths:
+  /api/v1/users:
+    get:
+      tags: [Users]
+      summary: Liste des utilisateurs
+      parameters:
+        - name: page
+          in: query
+          schema: { type: integer, default: 1 }
+        - name: limit
+          in: query
+          schema: { type: integer, default: 10 }
+        - name: search
+          in: query
+          schema: { type: string }
+        - name: role
+          in: query
+          schema:
+            type: string
+            enum: [APPRENANT, FORMATEUR, RESPONSABLE]
+      responses:
+        "200":
+          description: Liste paginée des utilisateurs
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  users:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/User"
+                  meta:
+                    type: object
+                    properties:
+                      total: { type: integer }
+                      page: { type: integer }
+                      limit: { type: integer }
+                      totalPages: { type: integer }
+    post:
+      tags: [Users]
+      summary: Créer un utilisateur
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserCreate"
+      responses:
+        "201":
+          description: Utilisateur créé
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+
+  /api/v1/users/{id}:
+    get:
+      tags: [Users]
+      summary: Récupérer un utilisateur par ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Utilisateur trouvé
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "404":
+          description: Utilisateur non trouvé
+    patch:
+      tags: [Users]
+      summary: Modifier un utilisateur
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserUpdate"
+      responses:
+        "200":
+          description: Utilisateur modifié
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+    delete:
+      tags: [Users]
+      summary: Supprimer un utilisateur
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "204":
+          description: Utilisateur supprimé
+
+  /api/v1/users/{id}/change-password:
+    patch:
+      tags: [Users]
+      summary: Changer le mot de passe d'un utilisateur
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ChangePassword"
+      responses:
+        "200":
+          description: Mot de passe modifié
+
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+        email:
+          type: string
+        name:
+          type: string
+        role:
+          type: string
+          enum: [APPRENANT, FORMATEUR, RESPONSABLE]
+        promotionId:
+          type: string
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+    UserCreate:
+      type: object
+      required: [email, password, name, role]
+      properties:
+        email: { type: string }
+        password: { type: string }
+        name: { type: string }
+        role:
+          type: string
+          enum: [APPRENANT, FORMATEUR, RESPONSABLE]
+        promotionId: { type: string }
+    UserUpdate:
+      type: object
+      properties:
+        email: { type: string }
+        name: { type: string }
+        role:
+          type: string
+          enum: [APPRENANT, FORMATEUR, RESPONSABLE]
+        promotionId: { type: string }
+    ChangePassword:
+      type: object
+      required: [currentPassword, newPassword]
+      properties:
+        currentPassword: { type: string }
+        newPassword: { type: string }

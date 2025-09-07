@@ -1,0 +1,81 @@
+paths:
+  /api/v1/competence-on-projects:
+    get:
+      tags: [CompetenceOnProject]
+      summary: Liste des compétences sur projets
+      responses:
+        "200":
+          description: Liste des compétences sur projets
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CompetenceOnProject"
+    post:
+      tags: [CompetenceOnProject]
+      summary: Lier une compétence à un projet
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CompetenceOnProjectCreate"
+      responses:
+        "201":
+          description: Lien créé
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CompetenceOnProject"
+  /api/v1/competence-on-projects/{projectId}/{competenceId}:
+    get:
+      tags: [CompetenceOnProject]
+      summary: Récupérer une compétence sur projet
+      parameters:
+        - name: projectId
+          in: path
+          required: true
+          schema: { type: string }
+        - name: competenceId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Lien trouvé
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CompetenceOnProject"
+        "404":
+          description: Lien non trouvé
+    delete:
+      tags: [CompetenceOnProject]
+      summary: Supprimer le lien
+      parameters:
+        - name: projectId
+          in: path
+          required: true
+          schema: { type: string }
+        - name: competenceId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "204":
+          description: Lien supprimé
+
+components:
+  schemas:
+    CompetenceOnProject:
+      type: object
+      properties:
+        projectId: { type: string }
+        competenceId: { type: string }
+    CompetenceOnProjectCreate:
+      type: object
+      required: [projectId, competenceId]
+      properties:
+        projectId: { type: string }
+        competenceId: { type: string }

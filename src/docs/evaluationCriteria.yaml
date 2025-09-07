@@ -1,0 +1,103 @@
+paths:
+  /api/v1/evaluation-criteria:
+    get:
+      tags: [EvaluationCriteria]
+      summary: Liste des critères d'évaluation
+      responses:
+        "200":
+          description: Liste des critères
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/EvaluationCriteria"
+    post:
+      tags: [EvaluationCriteria]
+      summary: Créer un critère
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EvaluationCriteriaCreate"
+      responses:
+        "201":
+          description: Critère créé
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EvaluationCriteria"
+  /api/v1/evaluation-criteria/{id}:
+    get:
+      tags: [EvaluationCriteria]
+      summary: Récupérer un critère par ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Critère trouvé
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EvaluationCriteria"
+        "404":
+          description: Critère non trouvé
+    patch:
+      tags: [EvaluationCriteria]
+      summary: Modifier un critère
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EvaluationCriteriaUpdate"
+      responses:
+        "200":
+          description: Critère modifié
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EvaluationCriteria"
+    delete:
+      tags: [EvaluationCriteria]
+      summary: Supprimer un critère
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "204":
+          description: Critère supprimé
+
+components:
+  schemas:
+    EvaluationCriteria:
+      type: object
+      properties:
+        id: { type: string }
+        name: { type: string }
+        weight: { type: integer }
+        projectId: { type: string }
+    EvaluationCriteriaCreate:
+      type: object
+      required: [name, weight, projectId]
+      properties:
+        name: { type: string }
+        weight: { type: integer }
+        projectId: { type: string }
+    EvaluationCriteriaUpdate:
+      type: object
+      properties:
+        name: { type: string }
+        weight: { type: integer }
+        projectId: { type: string }

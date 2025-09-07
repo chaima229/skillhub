@@ -1,0 +1,103 @@
+paths:
+  /api/v1/notifications:
+    get:
+      tags: [Notification]
+      summary: Liste des notifications
+      responses:
+        "200":
+          description: Liste des notifications
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Notification"
+    post:
+      tags: [Notification]
+      summary: Créer une notification
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/NotificationCreate"
+      responses:
+        "201":
+          description: Notification créée
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Notification"
+  /api/v1/notifications/{id}:
+    get:
+      tags: [Notification]
+      summary: Récupérer une notification par ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Notification trouvée
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Notification"
+        "404":
+          description: Notification non trouvée
+    patch:
+      tags: [Notification]
+      summary: Modifier une notification
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/NotificationUpdate"
+      responses:
+        "200":
+          description: Notification modifiée
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Notification"
+    delete:
+      tags: [Notification]
+      summary: Supprimer une notification
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "204":
+          description: Notification supprimée
+
+components:
+  schemas:
+    Notification:
+      type: object
+      properties:
+        id: { type: string }
+        message: { type: string }
+        userId: { type: string }
+        read: { type: boolean }
+        createdAt: { type: string, format: date-time }
+    NotificationCreate:
+      type: object
+      required: [message, userId]
+      properties:
+        message: { type: string }
+        userId: { type: string }
+    NotificationUpdate:
+      type: object
+      properties:
+        message: { type: string }
+        userId: { type: string }
+        read: { type: boolean }

@@ -1,0 +1,112 @@
+paths:
+  /api/v1/submissions:
+    get:
+      tags: [Submission]
+      summary: Liste des soumissions
+      responses:
+        "200":
+          description: Liste des soumissions
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Submission"
+    post:
+      tags: [Submission]
+      summary: Créer une soumission
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SubmissionCreate"
+      responses:
+        "201":
+          description: Soumission créée
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Submission"
+  /api/v1/submissions/{id}:
+    get:
+      tags: [Submission]
+      summary: Récupérer une soumission par ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Soumission trouvée
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Submission"
+        "404":
+          description: Soumission non trouvée
+    patch:
+      tags: [Submission]
+      summary: Modifier une soumission
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SubmissionUpdate"
+      responses:
+        "200":
+          description: Soumission modifiée
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Submission"
+    delete:
+      tags: [Submission]
+      summary: Supprimer une soumission
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "204":
+          description: Soumission supprimée
+
+components:
+  schemas:
+    Submission:
+      type: object
+      properties:
+        id: { type: string }
+        userId: { type: string }
+        projectId: { type: string }
+        url: { type: string }
+        comments: { type: string }
+        grade: { type: number }
+        status: { type: string }
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+    SubmissionCreate:
+      type: object
+      required: [userId, projectId, url, status]
+      properties:
+        userId: { type: string }
+        projectId: { type: string }
+        url: { type: string }
+        comments: { type: string }
+        grade: { type: number }
+        status: { type: string }
+    SubmissionUpdate:
+      type: object
+      properties:
+        url: { type: string }
+        comments: { type: string }
+        grade: { type: number }
+        status: { type: string }

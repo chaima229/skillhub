@@ -1,0 +1,173 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ===================
+// User & Roles
+// ===================
+model User {
+  id              String           @id @default(cuid())
+  email           String           @unique
+  password        String
+  name            String
+  role            Role
+  promotion       Promotion?       @relation(fields: [promotionId], references: [id])
+  promotionId     String?          @map("promotion_id")
+  groups          Group[]          @relation("UserGroups")
+  projects        ProjectAssignment[]
+  submissions     Submission[]
+  notifications   Notification[]
+  createdAt       DateTime         @default(now()) @map("created_at")
+  projectsCreated Project[]        @relation("CreatedProjects")
+
+  @@map("users")
+}
+
+enum Role {
+  APPRENANT
+  FORMATEUR
+  RESPONSABLE
+}
+
+// ===================
+// Promotion & Group
+// ===================
+model Promotion {
+  id     String  @id @default(cuid())
+  name   String
+  users  User[]
+  groups Group[]
+
+  @@map("promotions")
+}
+
+model Group {
+  id          String     @id @default(cuid())
+  name        String
+  users       User[]     @relation("UserGroups")
+  promotion   Promotion? @relation(fields: [promotionId], references: [id])
+  promotionId String?    @map("promotion_id")
+
+  @@map("groups")
+}
+
+// ===================
+// Projects
+// ===================
+model Project {
+  id           String                @id @default(cuid())
+  title        String
+  description  String
+  objectives   String
+  deadline     DateTime?
+  competencies CompetenceOnProject[]
+  criteria     EvaluationCriteria[]
+  resources    Resource[]
+  assignments  ProjectAssignment[]
+  createdBy    User                  @relation("CreatedProjects", fields: [createdById], references: [id])
+  createdById  String                @map("created_by_id")
+  submissions  Submission[]
+
+  @@map("projects")
+}
+
+model ProjectAssignment {
+  id        String  @id @default(cuid())
+  project   Project @relation(fields: [projectId], references: [id])
+  projectId String  @map("project_id")
+  user      User    @relation(fields: [userId], references: [id])
+  userId    String  @map("user_id")
+  status    AssignmentStatus @default(EN_COURS)
+
+  @@map("project_assignments")
+}
+
+enum AssignmentStatus {
+  EN_COURS
+  SOUMIS
+  VALIDE
+  A_RETRAVAILLER
+}
+
+// ===================
+// Compétences
+// ===================
+model Competence {
+  id       String               @id @default(cuid())
+  name     String
+  level    String
+  projects CompetenceOnProject[]
+
+  @@map("competences")
+}
+
+model CompetenceOnProject {
+  projectId    String
+  competenceId String
+  project      Project    @relation(fields: [projectId], references: [id])
+  competence   Competence @relation(fields: [competenceId], references: [id])
+
+  @@id([projectId, competenceId])
+  @@map("competence_on_project")
+}
+
+// ===================
+// Évaluation
+// ===================
+model EvaluationCriteria {
+  id        String   @id @default(cuid())
+  name      String
+  weight    Int
+  project   Project  @relation(fields: [projectId], references: [id])
+  projectId String   @map("project_id")
+
+  @@map("evaluation_criteria")
+}
+
+model Submission {
+  id        String   @id @default(cuid())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String   @map("user_id")
+  project   Project  @relation(fields: [projectId], references: [id])
+  projectId String   @map("project_id")
+  url       String?
+  comments  String?
+  grade     Float?
+  status    AssignmentStatus @default(SOUMIS)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt      @map("updated_at")
+
+  @@map("submissions")
+}
+
+// ===================
+// Ressources
+// ===================
+model Resource {
+  id        String   @id @default(cuid())
+  type      String
+  url       String
+  project   Project  @relation(fields: [projectId], references: [id])
+  projectId String   @map("project_id")
+
+  @@map("resources")
+}
+
+// ===================
+// Notifications
+// ===================
+model Notification {
+  id        String   @id @default(cuid())
+  message   String
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String   @map("user_id")
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("notifications")
+}

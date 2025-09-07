@@ -1,0 +1,97 @@
+paths:
+  /api/v1/promotions:
+    get:
+      tags: [Promotion]
+      summary: Liste des promotions
+      responses:
+        '200':
+          description: Liste des promotions
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Promotion'
+    post:
+      tags: [Promotion]
+      summary: Créer une promotion
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PromotionCreate'
+      responses:
+        '201':
+          description: Promotion créée
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Promotion'
+  /api/v1/promotions/{id}:
+    get:
+      tags: [Promotion]
+      summary: Récupérer une promotion par ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: Promotion trouvée
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Promotion'
+        '404':
+          description: Promotion non trouvée
+    patch:
+      tags: [Promotion]
+      summary: Modifier une promotion
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PromotionUpdate'
+      responses:
+        '200':
+          description: Promotion modifiée
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Promotion'
+    delete:
+      tags: [Promotion]
+      summary: Supprimer une promotion
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '204':
+          description: Promotion supprimée
+
+components:
+  schemas:
+    Promotion:
+      type: object
+      properties:
+        id: { type: string }
+        name: { type: string }
+    PromotionCreate:
+      type: object
+      required: [name]
+      properties:
+        name: { type: string }
+    PromotionUpdate:
+      type: object
+      properties:
+        name: { type: string }
