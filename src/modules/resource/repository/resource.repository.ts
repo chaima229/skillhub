@@ -42,7 +42,6 @@ export class ResourceRepository {
         where,
         skip,
         take: limit,
-        orderBy: { createdAt: "desc" },
       }),
       prisma.resource.count({ where }),
     ]);

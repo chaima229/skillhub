@@ -38,4 +38,5 @@ export interface NotificationResponseDto {
   userId: string;
   read: boolean;
   createdAt: string;
+  updatedAt: string;
 }

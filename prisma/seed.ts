@@ -80,6 +80,62 @@ async function main() {
   }
 
   console.log("✅ 10 utilisateurs insérés avec succès !");
+
+  // Seed projects
+  const formateurUser = await prisma.user.findFirst({ where: { role: Role.FORMATEUR } });
+  if (!formateurUser) {
+    console.error("Formateur user not found, cannot seed projects.");
+    return;
+  }
+
+  const projects = [
+    {
+      title: "Développement d'une application de gestion de compétences",
+      description: "Création d'une application web full-stack pour gérer les compétences des apprenants.",
+      objectives: "Maitriser les technologies front-end (React, TypeScript) et back-end (Node.js, Express, Prisma, PostgreSQL).",
+      deadline: new Date(new Date().setMonth(new Date().getMonth() + 3)), // 3 months from now
+      createdById: formateurUser.id,
+    },
+    {
+      title: "Implémentation d'un système de recommandation",
+      description: "Concevoir et développer un système de recommandation basé sur les compétences et les projets.",
+      objectives: "Explorer les algorithmes de recommandation et leur intégration dans une application existante.",
+      deadline: new Date(new Date().setMonth(new Date().getMonth() + 6)), // 6 months from now
+      createdById: formateurUser.id,
+    },
+  ];
+
+  for (const project of projects) {
+    await prisma.project.create({ data: project });
+  }
+
+  console.log("✅ Projets insérés avec succès !");
+
+  // Seed notifications
+  const apprenantUser = await prisma.user.findFirst({ where: { role: Role.APPRENANT } });
+  if (!apprenantUser) {
+    console.error("Apprenant user not found, cannot seed notifications.");
+    return;
+  }
+
+  const notifications = [
+    {
+      message: "Votre soumission pour le projet 'Application de gestion' a été évaluée.",
+      userId: apprenantUser.id,
+      read: false,
+    },
+    {
+      message: "Nouveau projet disponible : 'Système de recommandation'.",
+      userId: apprenantUser.id,
+      read: false,
+    },
+  ];
+
+  for (const notification of notifications) {
+    await prisma.notification.create({ data: notification });
+  }
+
+  console.log("✅ Notifications insérées avec succès !");
 }
 
 main()
