@@ -72,6 +72,8 @@ model Project {
   createdBy    User                  @relation("CreatedProjects", fields: [createdById], references: [id])
   createdById  String                @map("created_by_id")
   submissions  Submission[]
+  createdAt    DateTime              @default(now()) @map("created_at")
+  updatedAt    DateTime              @updatedAt @map("updated_at")
 
   @@map("projects")
 }
@@ -102,6 +104,8 @@ model Competence {
   name     String
   level    String
   projects CompetenceOnProject[]
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt      @map("updated_at")
 
   @@map("competences")
 }
@@ -154,6 +158,8 @@ model Resource {
   url       String
   project   Project  @relation(fields: [projectId], references: [id])
   projectId String   @map("project_id")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt      @map("updated_at")
 
   @@map("resources")
 }
